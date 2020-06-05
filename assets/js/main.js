@@ -33,14 +33,6 @@ const tarefas = [
 
 const table = document.getElementById('table');
 
-document.querySelector('#form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
-
-    let text = document.querySelector('#tf_2do').value;
-    text.search('#1')
-    console.log(text);
-})
-
 function mostrarTarefa(t) {
 
     // Criar uma nova linha
@@ -94,6 +86,14 @@ function mostrarTarefa(t) {
         tr.remove();
 
         // mostrarTarefas(tarefas);
+
+        // mostrar mensagem de sucesso
+        let s = document.querySelector('.sucesso');
+        s.style.display = 'block';
+
+        setTimeout(()=>{
+            s.style.display = 'none';
+        }, 3000)
     })
 
     // Criar uma célula
@@ -124,5 +124,41 @@ function removeTarefaPeloId(id) {
     let pos = tarefas.findIndex(t => t.id == id);
     tarefas.splice(pos, 1);
 }
+
+function adicionarTarefa(texto) {
+    let regExp = /^#[1-3]\ /;
+    regExp.test(texto);
+
+    let desc;
+    let prioridade;
+
+    if(regExp.test(texto)){
+        prioridade = Number(texto.charAt(1));
+        desc = texto.substr(3);
+    } else {
+        prioridade = 1;
+        desc = texto;
+    }
+
+    let t = {
+        id: tarefas[tarefas.length - 1]?.id + 1 || 1,
+        texto: desc,
+        prioridade,
+        feita: false
+    }
+
+    tarefas.push(t);
+
+    mostrarTarefa(t);
+}
+
+document.querySelector('#form').addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    let input = document.querySelector('#tf_2do');
+    let text = input.value;
+    adicionarTarefa(text);
+    input.value = '';
+    
+})
 
 mostrarTarefas(tarefas);
